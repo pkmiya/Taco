@@ -3,9 +3,20 @@ require("dotenv").config();
 const merge = require('deepmerge');
 const express = require('express');
 const cors = require('cors');
-app.use(cors());
-
 const mysql = require('mysql');
+const bodyParser = require('body-parser');
+var admin = require("firebase-admin");
+
+const app = express();
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+// ===========================
+// BELOW, PLACE YOUR SDK & DATABASE INFO
+// ===========================
+
+var serviceAccount = require("./tacoclass-9524b-firebase-adminsdk-qbzwy-5a781eb941.json");
 const connection = mysql.createConnection({
 	host: 'process.env.DATABASE_HOST',
 	user: 'process.env.DATABASE_USER',
@@ -13,30 +24,16 @@ const connection = mysql.createConnection({
 	database: 'process.env.DATABASE_NAME'
 });
 
+// ===========================
 
-const app = express();
-const { initializeApp } = require("firebase-admin/app");
 const port = process.env.PORT || 8080;
-
-//body-parser読み込み初期化
-const bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({ extended: true }));
-//HTTPリクエストのボディをjsonで扱えるようになる
-app.use(bodyParser.json());
-
-var admin = require("firebase-admin");
-var serviceAccount = require("./tacoclass-9524b-firebase-adminsdk-qbzwy-5a781eb941.json");
-
+const { initializeApp } = require("firebase-admin/app");
 initializeApp({
 	credential: admin.credential.cert(serviceAccount)
 });
-
-
-// expressサーバーの起動
 app.listen(port, () => {
 	console.log(`listening on *:${port}`);
 });
-
 connection.connect((err) => {
 	if (err) {
 		console.log('error connecting:' + err.stack);
@@ -45,7 +42,11 @@ connection.connect((err) => {
 	console.log('success')
 })
 
-//privateTodos
+// ===========================
+// BELOW, APIs ARE IMPLETEMTED
+// ===========================
+
+// get private-todos
 app.get('/api/todos', async (req, res) => {
 	const idToken = req.header("Authorization");
 	if (idToken) {
@@ -63,7 +64,7 @@ app.get('/api/todos', async (req, res) => {
 
 })
 
-
+// post todos
 app.post('/api/todos', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const content = req.body.content;
@@ -91,6 +92,7 @@ app.post('/api/todos', async (req, res) => {
 
 })
 
+// complete todos
 app.put('/api/todos/isdone', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const id = req.body.id
@@ -115,6 +117,7 @@ app.put('/api/todos/isdone', async (req, res) => {
 
 })
 
+// edit private-todos
 app.put('/api/todos/edit', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const id = req.body.id;
@@ -137,6 +140,7 @@ app.put('/api/todos/edit', async (req, res) => {
 
 })
 
+// edit shared-todos
 app.put('/api/sharetodos/edit', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const id = req.body.id;
@@ -159,7 +163,7 @@ app.put('/api/sharetodos/edit', async (req, res) => {
 
 })
 
-//shareTodos
+// get shared-todos
 app.get('/api/sharetodos', async (req, res) => {
 	const idToken = req.header("Authorization");
 	if (idToken) {
@@ -174,6 +178,7 @@ app.get('/api/sharetodos', async (req, res) => {
 	}
 })
 
+// post shared-todos
 app.post('/api/sharetodos', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const team_id = req.body.team_id;
@@ -200,6 +205,7 @@ app.post('/api/sharetodos', async (req, res) => {
 	}
 })
 
+// complete shared-todos
 app.put('/api/sharetodos/isdone', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const id = req.body.id
@@ -223,6 +229,7 @@ app.put('/api/sharetodos/isdone', async (req, res) => {
 	}
 })
 
+// get available-teams
 app.get('/api/teams', async (req, res) => {
 	const idToken = req.header("Authorization");
 	if (idToken) {
@@ -239,9 +246,7 @@ app.get('/api/teams', async (req, res) => {
 
 })
 
-
-
-
+// get badges for shared-todos
 app.get('/api/sharetodos/badges', async (req, res) => {
 	const idToken = req.header("Authorization");
 	if (idToken) {
@@ -258,8 +263,7 @@ app.get('/api/sharetodos/badges', async (req, res) => {
 
 })
 
-
-
+// post status of shared-todos by each member
 app.post('/api/sharetodos/status', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const team_id = req.body.team_id;
@@ -292,6 +296,7 @@ app.post('/api/sharetodos/status', async (req, res) => {
 
 })
 
+// get completed-todos
 app.get('/api/todo/dones', async (req, res) => {
 	const idToken = req.header("Authorization");
 	if (idToken) {
@@ -309,6 +314,7 @@ app.get('/api/todo/dones', async (req, res) => {
 
 })
 
+// uncomplete todos
 app.put('/api/todo/dones', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const id = req.body.id
@@ -332,6 +338,7 @@ app.put('/api/todo/dones', async (req, res) => {
 	}
 })
 
+// delete private-todos
 app.delete('/api/todo/dones', async (req, res) => {
 
 	const idToken = req.body.headers.Authorization;
@@ -357,6 +364,7 @@ app.delete('/api/todo/dones', async (req, res) => {
 
 })
 
+// get completed shared-todos
 app.get('/api/sharetodos/dones', async (req, res) => {
 	const idToken = req.header("Authorization");
 	if (idToken) {
@@ -371,6 +379,7 @@ app.get('/api/sharetodos/dones', async (req, res) => {
 	}
 })
 
+// uncomplete shared-todos
 app.put('/api/sharetodos/dones', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const id = req.body.id
@@ -394,7 +403,7 @@ app.put('/api/sharetodos/dones', async (req, res) => {
 	}
 })
 
-
+// delete shared-todos
 app.delete('/api/sharetodos', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const todo_shared_id = req.body.id;
@@ -421,7 +430,7 @@ app.delete('/api/sharetodos', async (req, res) => {
 
 })
 
-
+// get uncompleted todos
 app.get('/api/alltodos', async (req, res) => {
 	const idToken = req.header("Authorization");
 	if (idToken) {
@@ -442,7 +451,7 @@ app.get('/api/alltodos', async (req, res) => {
 	}
 })
 
-
+// get all teams
 app.get('/api/teams/all', async (req, res) => {
 	const idToken = req.header("Authorization");
 
@@ -459,8 +468,7 @@ app.get('/api/teams/all', async (req, res) => {
 	}
 })
 
-
-
+// join teams
 app.post('/api/teams/join', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const teamIds = req.body.teamIds;
