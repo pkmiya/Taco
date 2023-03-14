@@ -89,7 +89,7 @@ Gitをインストールする．Ubuntuのターミナルを開き`sudo apt inst
 git config --global user.name [任意のユーザ名]
 git config --global user.email [任意のユーザ名]
 ```
-3. Tacoのクローン
+1. Tacoのクローン
 Tacoをクローンする．以下のコマンドを入力
 ```
 git clone https://github.com/pkmiya/Taco.git
@@ -101,16 +101,16 @@ To-do管理システム（Webアプリ）としてユーザやTo-doのデータ�
 #### 手順１：MariaDBの初期設定
 1. 依存パッケージのインストール\
 MariaDBが依存するパッケージを先にインストールする．Ubuntuのターミナルを開き以下のコマンドを入力
-"""
+```
 sudo apt install dirmngr ca-certificates software-properties-common gnupg gnupg2 apt-transport-https curl -y
-"""
+```
 1. MariaDBのインストール\
 MariaDBをインストールする．`sudo apt install mariadb-server mariadb-client -y`と入力
 1. MariaDBの起動\
 MariaDBの起動状態を確認する．`sudo service mysql status`と入力し，「running」と表示されたら既に起動しているので，次へ進む．\
 ただし，「stopping」と表示されたら起動していないので，`sudo service mysql start`と入力しSQLサーバを起動する．
 1. セキュリティスクリプトの実行\
-SQLサーバの安全性を高めるよう設定を変更する．`sudo mysql_secure_installation`と入力\
+SQLサーバの安全性を高めるよう設定を変更する．`sudo mysql_secure_installation`と入力
     1. Enter current password for root\
     何も入力せず「Enter」キーを押す
     2. Set root password?\
@@ -118,7 +118,7 @@ SQLサーバの安全性を高めるよう設定を変更する．`sudo mysql_se
     3. これ以降の設定では，全て「y」と入力して「Enter」キーでよい\
     （匿名ユーザやテスト用データベースが削除されるが問題ない）
 1. パスワード認証方式への変更\
-Ubuntuは，デフォルトではMariaDBのroot認証に「UNIX経由である`unix_socket`方式」を採用しています．安全で使いやすい一方，運用が複雑なため，root認証方式を「パスワードを用いた`mysql_native_password`方式」へと変更します．\
+Ubuntuは，デフォルトではMariaDBのroot認証に「UNIX経由である`unix_socket`方式」を採用しています．安全で使いやすい一方，運用が複雑なため，root認証方式を「パスワードを用いた`mysql_native_password`方式」へと変更します．
     1. SQLサーバへログイン\
     SQLサーバへログイン．`sudo mysql -u root -p`と入力
     2. ユーザ認証方式の変更
@@ -200,8 +200,8 @@ CREATE TABLE todos_shared_status (
 > ３者win-winなシステムになります（ユーザはGoogleアカウントさえあれば別途アカウント作成の必要がない．学校側はGoogle Workspaceを導入していればユーザを一括管理できる．開発者は実装の手間が省けてセキュアなユーザ周りの実装ができる）．
 
 #### 手順１：Firebaseコンソールでの設定
-1. [Firebase](https://console.firebase.google.com/u/0/)にアクセス\
-お好みのアカウントでOKです（学校用アカウントでも良いが，卒業後に消える）
+1. [Firebaseコンソール](https://console.firebase.google.com/u/0/)にアクセス\
+お好みのアカウントでOKです（学校用アカウントでもよいが，アカウントが卒業時に消去されるためアクセスできなくなるよ）
 1. プロジェクトの作成
     1. 「プロジェクトを追加」を押す
     1. プロジェクト名を入力
@@ -253,7 +253,7 @@ DATABASE_NAME=tacoclass
 # 開発の進捗状況
 ### 注意点
 - Safariで開けない
-- リロードすると固まる（URLの`/home`を削除して再アクセスできる）
+- リロードすると固まる（URLのスラッシュ以下（`/home`とか）を削除して再アクセスできる）
 - 学内限定
 
 ### 開発予定
