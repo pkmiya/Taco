@@ -18,10 +18,10 @@ app.use(bodyParser.json());
 
 var serviceAccount = require("./tacoclass-9524b-firebase-adminsdk-qbzwy-5a781eb941.json");
 const connection = mysql.createConnection({
-	host: 'process.env.DATABASE_HOST',
-	user: 'process.env.DATABASE_USER',
-	password: 'process.env.DATABASE_PASSWORD',
-	database: 'process.env.DATABASE_NAME'
+	host: process.env.DATABASE_HOST,
+	user: process.env.DATABASE_USER,
+	password: process.env.DATABASE_PASSWORD,
+	database: process.env.DATABASE_NAME
 });
 
 // ===========================
@@ -46,7 +46,7 @@ connection.connect((err) => {
 // BELOW, APIs ARE IMPLETEMTED
 // ===========================
 
-// get private-todos
+// GET private-todos
 app.get('/api/todos', async (req, res) => {
 	const idToken = req.header("Authorization");
 	if (idToken) {
@@ -64,7 +64,7 @@ app.get('/api/todos', async (req, res) => {
 
 })
 
-// post todos
+// POST any-todos
 app.post('/api/todos', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const content = req.body.content;
@@ -92,7 +92,7 @@ app.post('/api/todos', async (req, res) => {
 
 })
 
-// complete todos
+// EDIT todo status (COMPLETE - mark as done)
 app.put('/api/todos/isdone', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const id = req.body.id
@@ -117,7 +117,7 @@ app.put('/api/todos/isdone', async (req, res) => {
 
 })
 
-// edit private-todos
+// EDIT private-todos
 app.put('/api/todos/edit', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const id = req.body.id;
@@ -140,7 +140,7 @@ app.put('/api/todos/edit', async (req, res) => {
 
 })
 
-// edit shared-todos
+// EDIT shared-todos
 app.put('/api/sharetodos/edit', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const id = req.body.id;
@@ -163,7 +163,7 @@ app.put('/api/sharetodos/edit', async (req, res) => {
 
 })
 
-// get shared-todos
+// GET shared-todos
 app.get('/api/sharetodos', async (req, res) => {
 	const idToken = req.header("Authorization");
 	if (idToken) {
@@ -178,7 +178,7 @@ app.get('/api/sharetodos', async (req, res) => {
 	}
 })
 
-// post shared-todos
+// POST shared-todos
 app.post('/api/sharetodos', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const team_id = req.body.team_id;
@@ -205,7 +205,7 @@ app.post('/api/sharetodos', async (req, res) => {
 	}
 })
 
-// complete shared-todos
+// EDIT shared-todos (COMPLETE - mark as done)
 app.put('/api/sharetodos/isdone', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const id = req.body.id
@@ -229,7 +229,7 @@ app.put('/api/sharetodos/isdone', async (req, res) => {
 	}
 })
 
-// get available-teams
+// GET available-teams
 app.get('/api/teams', async (req, res) => {
 	const idToken = req.header("Authorization");
 	if (idToken) {
@@ -246,7 +246,7 @@ app.get('/api/teams', async (req, res) => {
 
 })
 
-// get badges for shared-todos
+// GET badges for each team
 app.get('/api/sharetodos/badges', async (req, res) => {
 	const idToken = req.header("Authorization");
 	if (idToken) {
@@ -263,7 +263,7 @@ app.get('/api/sharetodos/badges', async (req, res) => {
 
 })
 
-// post status of shared-todos by each member
+// EDIT todo status (of each shared-todos by each member)
 app.post('/api/sharetodos/status', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const team_id = req.body.team_id;
@@ -296,7 +296,7 @@ app.post('/api/sharetodos/status', async (req, res) => {
 
 })
 
-// get completed-todos
+// GET completed-todos
 app.get('/api/todo/dones', async (req, res) => {
 	const idToken = req.header("Authorization");
 	if (idToken) {
@@ -314,7 +314,7 @@ app.get('/api/todo/dones', async (req, res) => {
 
 })
 
-// uncomplete todos
+// EDIT private-todos (UNDO - cancel marking as done)
 app.put('/api/todo/dones', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const id = req.body.id
@@ -338,9 +338,8 @@ app.put('/api/todo/dones', async (req, res) => {
 	}
 })
 
-// delete private-todos
+// DELETE private-todos
 app.delete('/api/todo/dones', async (req, res) => {
-
 	const idToken = req.body.headers.Authorization;
 	const id = req.body.id
 	console.log(req.body)
@@ -361,10 +360,9 @@ app.delete('/api/todo/dones', async (req, res) => {
 	else {
 		res.json(403).send();
 	}
-
 })
 
-// get completed shared-todos
+// GET completed shared-todos
 app.get('/api/sharetodos/dones', async (req, res) => {
 	const idToken = req.header("Authorization");
 	if (idToken) {
@@ -379,7 +377,7 @@ app.get('/api/sharetodos/dones', async (req, res) => {
 	}
 })
 
-// uncomplete shared-todos
+// EDIT shared-todos (UNDO - cancel marking as done)
 app.put('/api/sharetodos/dones', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const id = req.body.id
@@ -403,7 +401,7 @@ app.put('/api/sharetodos/dones', async (req, res) => {
 	}
 })
 
-// delete shared-todos
+// DELETE shared-todos
 app.delete('/api/sharetodos', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const todo_shared_id = req.body.id;
@@ -427,12 +425,12 @@ app.delete('/api/sharetodos', async (req, res) => {
 	else {
 		res.json(403).send();
 	}
-
 })
 
-// get uncompleted todos
+// GET icomplete-todos
 app.get('/api/alltodos', async (req, res) => {
 	const idToken = req.header("Authorization");
+
 	if (idToken) {
 		const { uid } = await admin.auth().verifyIdToken(idToken);
 		var privateQuery = "select id, content, dead_line, memo, created_at from todos_private where uid = ? and is_done = 0;";
@@ -451,10 +449,9 @@ app.get('/api/alltodos', async (req, res) => {
 	}
 })
 
-// get all teams
+// GET all teams
 app.get('/api/teams/all', async (req, res) => {
 	const idToken = req.header("Authorization");
-
 
 	if (idToken) {
 		var query = "SELECT * FROM teams";
@@ -468,7 +465,7 @@ app.get('/api/teams/all', async (req, res) => {
 	}
 })
 
-// join teams
+// EDIT teams (Join teams)
 app.post('/api/teams/join', async (req, res) => {
 	const idToken = req.body.headers.Authorization;
 	const teamIds = req.body.teamIds;
@@ -479,8 +476,8 @@ app.post('/api/teams/join', async (req, res) => {
 	console.log(teamIds)
 	var studentPattern = /[a-z]{2}[0-9]{4}[a-z]{4}/
 	console.log(studentPattern.test(userAccount));
-	if (idToken) {
 
+	if (idToken) {
 		var query = "INSERT INTO members (team_id, uid) VALUES (?,?)"
 		// var query = "MERGE into members using ( VALUES (?, ?)) as new (team_id, uid) on member.team_id = new.team_id and member.uid = new.uid whn not matched then insert (team_id, uid) values (teamId"
 		for (index in teamIds) {
@@ -495,5 +492,4 @@ app.post('/api/teams/join', async (req, res) => {
 	else {
 		res.json(403).send();
 	}
-
 })
